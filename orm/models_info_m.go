@@ -22,6 +22,7 @@ import (
 
 // single model info
 type modelInfo struct {
+	aliasName string
 	pkg       string
 	name      string
 	fullName  string

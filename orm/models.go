@@ -61,6 +61,18 @@ func (mc *_modelCache) allOrdered() []*modelInfo {
 	return m
 }
 
+// get ordered model info by aliasName
+func (mc *_modelCache) allOrderedByAliasName(aliasName string) []*modelInfo {
+	m := make([]*modelInfo, 0, len(mc.orders))
+	for _, table := range mc.orders {
+		value := mc.cache[table]
+		if value.aliasName == aliasName {
+			m = append(m, mc.cache[table])
+		}
+	}
+	return m
+}
+
 // get model info by table name
 func (mc *_modelCache) get(table string) (mi *modelInfo, ok bool) {
 	mi, ok = mc.cache[table]

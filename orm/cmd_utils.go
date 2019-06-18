@@ -35,7 +35,7 @@ func getDbDropSQL(al *alias) (sqls []string) {
 
 	Q := al.DbBaser.TableQuote()
 
-	for _, mi := range modelCache.allOrdered() {
+	for _, mi := range modelCache.allOrderedByAliasName(al.Name) {
 		sqls = append(sqls, fmt.Sprintf(`DROP TABLE IF EXISTS %s%s%s`, Q, mi.table, Q))
 	}
 	return sqls
@@ -146,7 +146,7 @@ func getDbCreateSQL(al *alias) (sqls []string, tableIndexes map[string][]dbIndex
 
 	tableIndexes = make(map[string][]dbIndex)
 
-	for _, mi := range modelCache.allOrdered() {
+	for _, mi := range modelCache.allOrderedByAliasName(al.Name) {
 		sql := fmt.Sprintf("-- %s\n", strings.Repeat("-", 50))
 		sql += fmt.Sprintf("--  Table Structure for `%s`\n", mi.fullName)
 		sql += fmt.Sprintf("-- %s\n", strings.Repeat("-", 50))

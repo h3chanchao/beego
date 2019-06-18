@@ -106,7 +106,7 @@ func (d *commandSyncDb) Run() error {
 	db := d.al.DB
 
 	if d.force {
-		for i, mi := range modelCache.allOrdered() {
+		for i, mi := range modelCache.allOrderedByAliasName(d.al.Name) {
 			query := drops[i]
 			if !d.noInfo {
 				fmt.Printf("drop table `%s`\n", mi.table)
@@ -134,7 +134,7 @@ func (d *commandSyncDb) Run() error {
 		fmt.Printf("    %s\n", err.Error())
 	}
 
-	for i, mi := range modelCache.allOrdered() {
+	for i, mi := range modelCache.allOrderedByAliasName(d.al.Name) {
 		if tables[mi.table] {
 			if !d.noInfo {
 				fmt.Printf("table `%s` already exists, skip\n", mi.table)
@@ -247,7 +247,7 @@ func (d *commandSQLAll) Parse(args []string) {
 func (d *commandSQLAll) Run() error {
 	sqls, indexes := getDbCreateSQL(d.al)
 	var all []string
-	for i, mi := range modelCache.allOrdered() {
+	for i, mi := range modelCache.allOrderedByAliasName(d.al.Name) {
 		queries := []string{sqls[i]}
 		for _, idx := range indexes[mi.table] {
 			queries = append(queries, idx.SQL)
