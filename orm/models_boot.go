@@ -24,7 +24,7 @@ import (
 // register models.
 // PrefixOrSuffix means table name prefix or suffix.
 // isPrefix whether the prefix is prefix or suffix
-func registerModel(aliasName string, PrefixOrSuffix string, model interface{}, isPrefix bool) {
+func registerModel(aliasNames []string, PrefixOrSuffix string, model interface{}, isPrefix bool) {
 	val := reflect.ValueOf(model)
 	typ := reflect.Indirect(val).Type()
 
@@ -85,7 +85,7 @@ func registerModel(aliasName string, PrefixOrSuffix string, model interface{}, i
 	mi.pkg = typ.PkgPath()
 	mi.model = model
 	mi.manual = true
-	mi.aliasName = aliasName
+	mi.aliasNames = aliasNames
 
 	modelCache.set(table, mi)
 }
@@ -308,25 +308,25 @@ func RegisterModel(models ...interface{}) {
 	if modelCache.done {
 		panic(fmt.Errorf("RegisterModel must be run before BootStrap"))
 	}
-	RegisterModelWithPrefix("default", "", models...)
+	RegisterModelWithPrefix([]string{"default"}, "", models...)
 }
 
 // RegisterModel register models
-func RegisterModelByAliasName(aliasName string, models ...interface{}) {
+func RegisterModelByAliasNames(aliasNames []string, models ...interface{}) {
 	if modelCache.done {
 		panic(fmt.Errorf("RegisterModel must be run before BootStrap"))
 	}
-	RegisterModelWithPrefix(aliasName, "", models...)
+	RegisterModelWithPrefix(aliasNames, "", models...)
 }
 
 // RegisterModelWithPrefix register models with a prefix
-func RegisterModelWithPrefix(aliasName string, prefix string, models ...interface{}) {
+func RegisterModelWithPrefix(aliasNames []string, prefix string, models ...interface{}) {
 	if modelCache.done {
 		panic(fmt.Errorf("RegisterModelWithPrefix must be run before BootStrap"))
 	}
 
 	for _, model := range models {
-		registerModel(aliasName, prefix, model, true)
+		registerModel(aliasNames, prefix, model, true)
 	}
 }
 
@@ -337,7 +337,7 @@ func RegisterModelWithSuffix(suffix string, models ...interface{}) {
 	}
 
 	for _, model := range models {
-		registerModel("default", suffix, model, false)
+		registerModel([]string{"default"}, suffix, model, false)
 	}
 }
 
